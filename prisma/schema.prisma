@@ -1,0 +1,24 @@
+// Este é o seu arquivo de schema do Prisma,
+// aprenda mais sobre ele nos docs: https://pris.ly/d/prisma-schema
+
+// Procurando maneiras de acelerar suas consultas ou escalar facilmente com suas funções serverless ou edge?
+// Tente o Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./mydb.db"
+}
+
+model Hosts {
+  id       Int    @id @default(autoincrement())
+  name     String
+  address  String
+  port     String
+  username String
+  password String
+  type     String
+}
