@@ -6,7 +6,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const awaitingApiKey = process.env.API_KEY
-const applicationPort = process.env.PORT || 3000;
+const applicationPort = process.env.PORT || 3333;
 
 const server = async () => {
   const app = fastify();
@@ -14,11 +14,13 @@ const server = async () => {
   // API Key middleware
   app.addHook('onRequest', async (request, reply) => {
     const apiKey = request.headers['x-api-key'];
-    console.log('apiKey Received:', apiKey);
-    console.log('awaitingApiKey:', awaitingApiKey);
+    const expectedApiKey = awaitingApiKey?.replace(/"/g, ''); // Remove as aspas
 
-    if (!apiKey || apiKey !== awaitingApiKey) {
-      reply.code(401).send({ 
+    console.log('apiKey Received:', apiKey);
+    console.log('awaitingApiKey:', expectedApiKey);
+
+    if (!apiKey || apiKey !== expectedApiKey) {
+      return reply.code(401).send({ 
         error: 'Unauthorized',
         message: 'Invalid or missing API key'
       });
@@ -31,7 +33,10 @@ const server = async () => {
   // Rotas e configurações aqui
   app.register(router);
 
-  await app.listen({ port: Number(applicationPort)});
+  await app.listen({ 
+    port: Number(applicationPort),
+    host: '0.0.0.0'
+  });
   console.log(awaitingApiKey)
   console.log(`Servidor rodando em http://localhost:` + applicationPort);
 };
